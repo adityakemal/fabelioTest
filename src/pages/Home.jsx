@@ -21,7 +21,6 @@ class Home extends Component {
     
     fetchApi = ()=>{
         Axios.get('http://www.mocky.io/v2/5c9105cb330000112b649af8').then(res =>{
-            console.log(res);
             this.setState({
                 dataProducts : res.data.products,
                 dataFurStyle : res.data.furniture_styles,
@@ -31,7 +30,7 @@ class Home extends Component {
     }
     
     handleNameChange = (e) =>{
-        this.setState({filterName : e.target.value.toLowerCase() }, ()=>{
+        this.setState({filterName : e.target.value.toLowerCase()}, ()=>{
            this.functFilterName()
         })
     }
@@ -47,8 +46,6 @@ class Home extends Component {
     }
 
     onChangeSel = (opt, a)=>{
-        console.log(opt, 'opt')
-        console.log(a, 'action')
         if (opt !== null) {
             this.setState({filterStyle : true})
         }else{
@@ -56,11 +53,7 @@ class Home extends Component {
         }
 
         if (opt) {
-            if (this.state.filterTime) {
-                var dataToLoop = this.state.dataProducts
-            }else{
-                var dataToLoop = this.state.initialDataProd
-            }
+            var dataToLoop = this.state.filterTime? this.state.dataProducts : this.state.initialDataProd
             if (a.action === 'select-option') {
                 const fillData = dataToLoop.filter(res=> opt.every(i => res.furniture_style.includes(i.value)) )
                 this.setState({dataProducts : fillData})
@@ -82,32 +75,26 @@ class Home extends Component {
     
 
     onChangeSelTime = (opt, a)=>{
-        console.log(opt, 'opt')
-        console.log(a, 'action')
         if (opt !== null) {
             this.setState({filterTime : true})
         }else{
             this.setState({filterTime : false})
         }
         if (opt) {
-            if (this.state.filterStyle) {
-                var dataToLoop = this.state.dataProducts
-            }else{
-                var dataToLoop = this.state.initialDataProd
-            }
-            if (a.action === 'select-option') {
-                const fillData = dataToLoop.filter(res=> opt.every(i => res.delivery_time <= i.value) )
-                this.setState({dataProducts : fillData})
-                console.log(fillData)
-            }
-            if (a.action === 'remove-value') {
-                const fillData = dataToLoop.filter(res=> opt.every(i => res.delivery_time <= i.value) )
-                this.setState({dataProducts : fillData})
+            var dataToLoop = this.state.filterStyle? this.state.dataProducts : this.state.initialDataProd
+            // if (a.action === 'select-option') {
+            const fillData = dataToLoop.filter(res=>  res.delivery_time <= opt.value)
+            this.setState({dataProducts : fillData})
                 // console.log(fillData)
-            }
-            if (a.action === 'clear') {
-                this.setState({dataProducts : this.state.initialDataProd})
-            }
+            // }
+            // if (a.action === 'remove-value') {
+            //     const fillData = dataToLoop.filter(res=> opt.every(i => res.delivery_time <= i.value) )
+            //     this.setState({dataProducts : fillData})
+            //     // console.log(fillData)
+            // }
+            // if (a.action === 'clear') {
+            //     this.setState({dataProducts : this.state.initialDataProd})
+            // }
         }else{
             this.setState({dataProducts : this.state.initialDataProd})
         }  
@@ -148,14 +135,13 @@ class Home extends Component {
 
     render() {
         const optTime = [
-            {label : '1 Week', value : 7},
-            {label : '2 Week', value : 12},
-            {label : '1 Month', value : 31},
+            {label : '<1 Week', value : 7},
+            {label : '<2 Week', value : 12},
+            {label : '<1 Month', value : 31},
             {label : 'more', value : 365},
         ]
-        console.log(this.state, 'ini state')
         return (
-            <div className='home container-md p-3'>
+            <div className='home container-md'>
                 <div className="header p-3">
                     <div className="row">
                         <div className="col-md-6">
@@ -186,12 +172,9 @@ class Home extends Component {
                         <div className="col-md-6">
                         <Select
                             name = 'day_del'
-                            closeMenuOnSelect={false}
-                            components={animatedComponents}
+                            isClearable
                             placeholder='Delivery Time'
-                            // defaultValue={[colourOptions[4], colourOptions[5]]}
                             onChange={this.onChangeSelTime}
-                            isMulti
                             options={optTime}
                             />
                             <hr/>
