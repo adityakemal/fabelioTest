@@ -1,10 +1,10 @@
+import objData from './staticData'
 import React, { Component } from 'react';
 import Axios from 'axios';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 const animatedComponents = makeAnimated();
 
-// import objData from './staticData'
 
 class Home extends Component {
     state = {
@@ -26,7 +26,14 @@ class Home extends Component {
                 dataFurStyle : res.data.furniture_styles,
                 initialDataProd : res.data.products,
             })
-        }).catch(err=>{console.log(err)})
+        }).catch(err=>{
+            console.log(err)
+            this.setState({
+                dataProducts : objData.products,
+                dataFurStyle : objData.furniture_styles,
+                initialDataProd : objData.products,
+            })
+        })
     }
     
     handleNameChange = (e) =>{
